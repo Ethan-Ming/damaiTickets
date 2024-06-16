@@ -137,7 +137,7 @@ while driver.find_elements(by=By.XPATH,
     # 定义需要截取的区域的坐标
     left, top, right, bottom = 568, 2290, 622, 2340
 
-    print("获取当前页面分辨率：",driver.get_window_size()['width'],driver.get_window_size()['height'])
+    print("获取当前页面分辨率：",driver.get_window_size()['width'],"*",driver.get_window_size()['height'])
     # 调用函数获取文字
     bot_btn= capture_and_ocr(driver, left, top, right, bottom)
     
