@@ -22,8 +22,10 @@ device_app_info = AppiumOptions()
 device_app_info.set_capability('platformName', 'Android')
 # 操作系统版本
 device_app_info.set_capability('platformVersion', '14')
+# # 设备名称
+# device_app_info.set_capability('deviceName', '69b6b7a4')
 # 设备名称
-device_app_info.set_capability('deviceName', '69b6b7a4')
+device_app_info.set_capability('deviceName', 'Redmi K50 Pro')
 # app package
 device_app_info.set_capability('appPackage', 'cn.damai')
 # app activity name
@@ -51,7 +53,7 @@ driver.implicitly_wait(0.1)
 # 空闲时间10ms,加速
 driver.update_settings({"waitForIdleTimeout": 0.1})
 
-
+# 定义处
 def handle_order(driver, config):
     if driver.find_elements(by=By.ID, value='recycler_main') and config.users is not None:
         text_name_list=driver.find_elements(by=By.ID, value='text_name')
@@ -65,10 +67,14 @@ def handle_order(driver, config):
             print('handleOrder')
             # driver.find_element(by=AppiumBy.ANDROID_UIAUTOMATOR, value='new UiSelector().text("提交订单")').click()
             # return True  # 返回 True 表示提交订单成功
+            ##TODO? 半成品有待优化
+            print('订单处理流程1')
             driver.back()
+            print('订单返回流程1')
             return False  # 返回 False 表示提交订单失败
-            
+    print('订单处理流程2')
     driver.back()
+    print('订单返回流程2')
     return False  # 返回 False 表示提交订单失败
 
 def ticket_price_num(driver,config,priceIndex,numSelect):
@@ -118,25 +124,28 @@ def selset(driver,config):
                     numSelect=ticket_price_num(driver,config,priceIndex,numSelect)
 
                 first=False
+    #开始订单流程
     if comfirm:
         comfirmSuccess = handle_order(driver, config)
     return comfirmSuccess
     
 
                             
-                        
+#  调用处               
 while driver.find_elements(by=By.XPATH,
                            value='//android.widget.FrameLayout[@resource-id="cn.damai:id/trade_project_detail_purchase_status_bar_container_fl"]'):
     # 定义需要截取的区域的坐标
     left, top, right, bottom = 568, 2290, 622, 2340
 
+    print("获取当前页面分辨率：",driver.get_window_size()['width'],driver.get_window_size()['height'])
     # 调用函数获取文字
     bot_btn= capture_and_ocr(driver, left, top, right, bottom)
     
     # 立即购买
     if '立' in bot_btn or '缺' in bot_btn :
+        #x y
         driver.tap([(606, 2301)])
-
+        #页面显示未抢到票时
         comfirmSuccess=False
         while not comfirmSuccess:
             comfirmSuccess=selset(driver,config)      
