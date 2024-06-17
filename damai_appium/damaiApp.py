@@ -13,6 +13,8 @@ from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.common.by import By
 from config import Config
 from ocr import capture_and_ocr
+
+import xml.etree.ElementTree as ET  
 import random
 # 加载配置信息
 config = Config.load_config()
@@ -54,6 +56,13 @@ driver.implicitly_wait(0.1)
 driver.update_settings({"waitForIdleTimeout": 0.1})
 
 # 定义处
+#打印页面元素
+def printPage(driver):
+    page_source = driver.page_source 
+    root = ET.fromstring(page_source)
+    for child in root:  
+        print("页面元素",ET.tostring(child, encoding='unicode')) 
+
 def handle_order(driver, config):
     if driver.find_elements(by=By.ID, value='recycler_main') and config.users is not None:
         text_name_list=driver.find_elements(by=By.ID, value='text_name')
@@ -78,11 +87,13 @@ def handle_order(driver, config):
     return False  # 返回 False 表示提交订单失败
 
 def ticket_price_num(driver,config,priceIndex,numSelect):
+    print('票价选择流程开始','选择票档',config.priceList[priceIndex]+config.dateLen)
     # 票价选择
     if driver.find_elements(by=By.ID, value='project_detail_perform_price_flowlayout'):       
         driver.find_element(by=By.XPATH,
-                                        value='(//android.widget.TextView[@resource-id="cn.damai:id/item_text"])[{}]'.format(config.priceList[priceIndex]+config.dateLen)).click()
-        
+                                        value='(//android.widget.LinearLayout[@resource-id="cn.damai:id/ll_perform_item"])[{}]'.format(config.priceList[priceIndex]+config.dateLen)).click()
+        # driver.find_element(by=By.XPATH,
+        #                                 value='(//android.widget.TextView[@resource-id="cn.damai:id/item_text"])[{}]'.format(config.priceList[priceIndex]+config.dateLen)).click()
         print('票价选择22',config.priceList[priceIndex]+config.dateLen)
     # 数量选择
     if driver.find_elements(by=By.ID, value='layout_num') and config.users is not None:
@@ -116,8 +127,14 @@ def selset(driver,config):
                     if not first:
                         dateIndex= (dateIndex+1) % len(config.dateList)
                     if driver.find_elements(by=By.ID, value='layout_perform_view'):
-                        print('日期选择2',dateIndex)   
+                        print('日期选择',dateIndex)
+                        print('价格选择',priceIndex)
+                        print('numSelect',numSelect)  
+                        # print('日期选择2',dateIndex)
+                        # 选择场次
                         driver.find_element(by=By.XPATH,value='(//android.widget.LinearLayout[@resource-id="cn.damai:id/ll_perform_item"])[{}]'.format(config.dateList[dateIndex])).click()
+
+  
                     numSelect=ticket_price_num(driver,config,priceIndex,numSelect)
                 else:
                     # print('priceIndex',priceIndex)
@@ -140,6 +157,8 @@ while driver.find_elements(by=By.XPATH,
     print("获取当前页面分辨率：",driver.get_window_size()['width'],"*",driver.get_window_size()['height'])
     # 调用函数获取文字
     bot_btn= capture_and_ocr(driver, left, top, right, bottom)
+
+    print("底部按钮",bot_btn)
     
     # 立即购买
     if '立' in bot_btn or '缺' in bot_btn :
