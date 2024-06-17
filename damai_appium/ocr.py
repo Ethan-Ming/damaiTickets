@@ -23,7 +23,7 @@ def capture_and_ocr(driver, left, top, right, bottom):
     # pytesseract.pytesseract.tesseract_cmd = 'G:\\tesseractOcr\\\\tesseract.exe'
     pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
     # 使用 OCR 获取文字
-    # custom_config = r'--oem 1 --psm 6'
+    custom_config = r'--oem 1 --psm 6'
     # text = pytesseract.image_to_string(cropped_image, lang='chi_sim', config=custom_config)
 
     ##
@@ -32,7 +32,8 @@ def capture_and_ocr(driver, left, top, right, bottom):
 
     testdata_dir_config = '--tessdata-dir "C:\\Program Files\\Tesseract-OCR\\tessdata"'
 
-    text = pytesseract.image_to_string(cropped_image, config=testdata_dir_config, lang='chi_sim') 
+    # text = pytesseract.image_to_string(cropped_image, config=testdata_dir_config, lang='chi_sim') 
+    text = pytesseract.image_to_string(cropped_image, lang='chi_sim', config=custom_config) 
     ##
     print('开始抢票OCR',text)
     end_time = time.time()  # 记录结束时间
