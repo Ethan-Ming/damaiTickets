@@ -23,7 +23,7 @@ device_app_info = AppiumOptions()
 # 操作系统
 device_app_info.set_capability('platformName', 'Android')
 # 操作系统版本
-device_app_info.set_capability('platformVersion', '14')
+device_app_info.set_capability('platformVersion', '11')
 # # 设备名称
 # device_app_info.set_capability('deviceName', '69b6b7a4')
 # 设备名称
